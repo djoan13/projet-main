@@ -1,0 +1,36 @@
+services:
+   nginx:
+     build: ./nginx/
+     ports:
+       - 80:80
+     volumes:
+         - ./php_code/:/var/www/html/
+
+   php:
+     build: ./php_code/
+     expose:
+       - 9000
+     volumes:
+        - ./php_code/:/var/www/html/
+
+   db:
+      image: mariadb
+      volumes:
+        - mysql-data:/var/lib/mysql
+      environment:
+       MYSQL_ROOT_PASSWORD: mariadb
+       MYSQL_DATABASE: ecomdb
+
+   phpmyadmin:
+     image: phpmyadmin/phpmyadmin:latest
+     restart: always
+     depends_on:
+       - db
+     environment:
+       PMA_HOST: db
+       MYSQL_ROOT_PASSWORD: mariadb
+     ports:
+       - "8080:80"
+
+volumes:
+    mysql-data:
